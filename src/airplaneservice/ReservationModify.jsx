@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react";
-import { getProdFlag, getCurrentDateTime } from './utils.js'
-import { getLoginedSessionID } from "./session.js";
+import React, {useState} from "react";
+import { getProdFlag, getCurrentDateTime } from "./utils";
+import { getLoginedSessionID } from "./session";
 
-const Reservation = (props) => {
+const ReservationModify = (props) => {
 
     //hook
     const [rName, setRName] = useState('');
@@ -16,27 +16,6 @@ const Reservation = (props) => {
     const [rChildCnt, setRChildCnt] = useState('0');
     const [rInfantCnt, setRInfantCnt] = useState('0');
 
-    useEffect(() => {
-        if (!getProdFlag()) console.log('useEffect()');
-
-        //console.log(props.keyToBoeModified);
-        let reservationDBInStorage = localStorage('reservationDB');
-        let reservationDBObj = JSON.parse(reservationDBInStorage);
-        let myReservations = reservationDBObj[getLoginedSessionID()];
-        let toBeModifiedReservationObj = myReservations[props.keyToBeModified];
-
-        setRName(toBeModifiedReservationObj,rName);
-        setRMail(toBeModifiedReservationObj,rMail);
-        setRPhone(toBeModifiedReservationObj,rPhone);
-        setRSP(toBeModifiedReservationObj,rSP);
-        setRSPT(toBeModifiedReservationObj,rSPT);
-        setREP(toBeModifiedReservationObj,rEP);
-        setREPT(toBeModifiedReservationObj,rEPT);
-        setRAdultCnt(toBeModifiedReservationObj,rAdultCnt);
-        setRChildCnt(toBeModifiedReservationObj,rChildCnt);
-        setRInfantCnt(toBeModifiedReservationObj,rInfantCnt);
-
-    }, []);
 
     //handler
     const rNameChangeHandler = (e) => {
@@ -91,15 +70,14 @@ const Reservation = (props) => {
         setRInfantCnt(e.target.value);
     }
 
-    const reservationBtnClickHandler = () => {
+    const reserMODBtnClickHandler = () => {
         if(!getProdFlag()) console.log('reservationBtnClickHandler()');
         
         let reservationDBInStorage = localStorage.getItem('reservationDB'); //String
         let reservationObj = JSON.parse(reservationDBInStorage);         // reservation Obj(All reservation)
         let myReservationObjs =  reservationObj[getLoginedSessionID()]; //My Reservation Objs
-        if(!getProdFlag()) console.log('::::: myReservationObjs', myReservationObjs);
 
-        myReservationObjs[getCurrentDateTime()] = {
+        myReservationObjs[props.keyToBeModified] = {
             'rName'     : rName,
             'rMail'     : rMail,
             'rPhone'    : rPhone,
@@ -116,34 +94,31 @@ const Reservation = (props) => {
         reservationDBInStorage = JSON.stringify(reservationObj);    //String
         localStorage. setItem('reservationDB', reservationDBInStorage);
 
-        alert('RESERVATION SUCCESS');
+        alert('MODIFY RESERVATION SUCCESS');
 
-        props.homeViewer(false);
-        props.signUpViewer(false);
-        props.signInViewer(false);
-        props.reservationViewer(true);
-        props.reservationListViewer(false);
+        props.setShowReservationModifyModal(false);
+
+  
 
 
     }
-
     return(
         <>
-            <input type="text" name="rName" onChange={rNameChangeHandler} placeholder="Input name" />
+            <input type="text" name="rName" value={rName} onChange={rNameChangeHandler} placeholder="Input name" />
             <br />
-            <input type="text" name="rMail" onChange={rMailChangeHandler} placeholder="Input mail" />
+            <input type="text" name="rMail" value={rMail} onChange={rMailChangeHandler} placeholder="Input mail" />
             <br/>
-            <input type="text" name="rPhone" onChange={rPhoneChangeHandler} placeholder="Input phone" />
+            <input type="text" name="rPhone" value={rPhone} onChange={rPhoneChangeHandler} placeholder="Input phone" />
             <br/>
-            <input type="text" name="rStartPoint" onChange={rSPChangeHandler} placeholder="Input start point" />
+            <input type="text" name="rStartPoint" value={rSP} onChange={rSPChangeHandler} placeholder="Input start point" />
             <br/>
-            <input type="text" name="rStartPointTime" onChange={rSPTChangeHandler} placeholder="Input start point time" />
+            <input type="text" name="rStartPointTime" value={rSPT} onChange={rSPTChangeHandler} placeholder="Input start point time" />
             <br/>
-            <input type="text" name="rEndPoint" onChange={rEPChangeHandler} placeholder="Input end point" />
+            <input type="text" name="rEndPoint" value={rEP} onChange={rEPChangeHandler} placeholder="Input end point" />
             <br/>
-            <input type="text" name="rEndPointTime" onChange={rEPTChangeHandler} placeholder="Input start end time" />
+            <input type="text" name="rEndPointTime" value={rEPT} onChange={rEPTChangeHandler} placeholder="Input start end time" />
             <br/>
-            <select name="rAdultCnt" onChange={rAdultCntChangeHandler}>
+            <select name="rAdultCnt" value={rAdultCnt} onChange={rAdultCntChangeHandler}>
                 <option value=''>--- 성인수(만18세이상) ---</option>
                 <option value={0}>0</option>
                 <option value={1}>1</option>
@@ -152,7 +127,7 @@ const Reservation = (props) => {
                 <option value={4}>4</option>
             </select>
             <br/>
-            <select name="rChild onChange={rChildCntChangeHandler}">
+            <select name="rChild" value={rChildCnt} onChange="{rChildCntChangeHandler}">
                 <option value=''>--- 어린이수(만7세이상 ~ 만18세미만) ---</option>
                 <option value={0}>0</option>
                 <option value={1}>1</option>
@@ -161,7 +136,7 @@ const Reservation = (props) => {
                 <option value={4}>4</option>
             </select>
             <br/>
-            <select name="rInfantCnt" onChange={rInfantCntChangeHandler}>
+            <select name="rInfantCnt" value={rInfantCnt} onChange={rInfantCntChangeHandler}>
                 <option value=''>--- 유아수(만7세미만) ---</option>
                 <option value={0}>0</option>
                 <option value={1}>1</option>
@@ -170,9 +145,9 @@ const Reservation = (props) => {
                 <option value={4}>4</option>
             </select>
             <br/>
-            <input type="button" value="RESERVATION" onClick={reservationBtnClickHandler}/>
+            <input type="button" value="MODIFY RESERVATION" onClick={reserMODBtnClickHandler}/>
         </>
     );
 }
 
-export default Reservation;
+export default ReservationModify;

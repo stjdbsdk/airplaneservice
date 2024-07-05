@@ -5,6 +5,8 @@ import SignIn from './SignIn';
 import Reservation from './Reservation';
 import ReservationList from './ReservationList';
 
+import {getLoginedSessionID} from './session.js';
+
 const Menubar = () => {
 
     //hook
@@ -60,15 +62,42 @@ const Menubar = () => {
     const reservationClickHandler = () => {
         console.log("reservationClickHandler()");
 
+        if (getLoginedSessionID() === ''){
+            alert('Please SIGN IN');
+
+            setIsHome(false);
+            setIsSignUp(false);
+            setIsSignIn(true);
+            setIsReservation(false);
+            setIsReservationList(false);
+
+            return;
+        }
         setIsHome(false);
         setIsSignUp(false);
         setIsSignIn(false);
         setIsReservation(true);
         setIsReservationList(false);
+
+
+
+
     }
     const reservationListClickHandler = () => {
         console.log("reservationListClickHandler()");
 
+        if (getLoginedSessionID() === ''){
+            alert('Please SIGN IN');
+
+            setIsHome(false);
+            setIsSignUp(false);
+            setIsSignIn(true);
+            setIsReservation(false);
+            setIsReservationList(false);
+
+            return;
+        }
+        
         setIsHome(false);
         setIsSignUp(false);
         setIsSignIn(false);
@@ -124,14 +153,25 @@ const Menubar = () => {
         {
             isSignIn
             ?
-            <SignIn />
+            <SignIn
+            homeViewer={setIsHome}
+            signUpViewer={setIsSignUp}
+            signInViewer={setIsSignIn}
+            reservationViewer={setIsReservation}
+            reservationListViewer={setIsReservationList}
+            changeMenuBar={setIsLogined} />
             :
             null
         }
         {
             isReservation
             ?
-            <Reservation />
+            <Reservation
+            homeViewer={setIsHome}
+            signUpViewer={setIsSignUp}
+            signInViewer={setIsSignIn}
+            reservationViewer={setIsReservation}
+            reservationListViewer={setIsReservationList} />
             :
             null
         }
